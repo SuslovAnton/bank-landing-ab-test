@@ -1,11 +1,13 @@
-# 🧪 Bank Loan Landing Page A/B Test  
+# Bank Loan Landing Page A/B Test  
 
-### 🎯 Objective  
+# Objective  
 Evaluate whether a new **landing page** design increases the conversion rate for bank-loan applications compared to the existing control page.  
 
 ---
+# 1. Load Dataset and Quick Overview
 
-### 📂 Dataset  
+### Dataset
+
 File: `ab_data.csv`  
 Each record represents a user landing on either the control or treatment page, along with whether they converted (submitted an application).  
 
@@ -18,7 +20,7 @@ Each record represents a user landing on either the control or treatment page, a
 
 ---
 
-### 🔍 Experimental Overview  
+### Experimental Overview  
 - **Control group:** current landing page  
 - **Treatment group:** redesigned landing page  
 - **Metric:** conversion rate (proportion of users who applied)  
@@ -28,7 +30,7 @@ Each record represents a user landing on either the control or treatment page, a
 
 ---
 
-### 🧮 Key Results  
+### Key Results  
 
 | Metric | Control | Treatment |
 |---------|----------|-----------|
@@ -43,17 +45,17 @@ The treatment page performed slightly worse, but the difference is small and cou
 
 ---
 
-### 📊 Visual Insights  
-- 📈 Bar chart comparing conversion rates (grey–pink palette)  
-- 📊 Conversion counts by group  
-- 🎯 95 % confidence-interval plot confirming overlap  
-- 💹 Lift plot quantifying relative change  
+### Visual Insights  
+- Bar chart comparing conversion rates (grey–pink palette)  
+- Conversion counts by group  
+- 95 % confidence-interval plot confirming overlap  
+- Lift plot quantifying relative change  
 
 *(Screenshots or chart images can be embedded here.)*
 
 ---
 
-### 🧠 Business Takeaways  
+### Business Takeaways  
 - The new landing page **did not outperform** the control.  
 - Since the difference is not statistically significant, **keep the control page** for now.  
 - Consider:  
@@ -62,12 +64,12 @@ The treatment page performed slightly worse, but the difference is small and cou
 
 ---
 
-### ⚙️ Tech Stack  
+### Tech Stack  
 `Python 3` · `pandas` · `numpy` · `matplotlib` · `seaborn` · `scipy`  
 
 ---
 
-### 🧩 Next Steps  
-- 🔍 Perform **power analysis** to determine optimal sample size for future tests.  
-- 📊 Segment users by device type, region, or traffic source for deeper insights.  
-- 🧰 Turn this notebook into a **reusable A/B testing template** for portfolio and job applications.  
+### Next Steps  
+- Perform **power analysis** to determine optimal sample size for future tests.  
+- Segment users by device type, region, or traffic source for deeper insights.  
+- Turn this notebook into a **reusable A/B testing template** for portfolio and job applications.  
