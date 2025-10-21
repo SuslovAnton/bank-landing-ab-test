@@ -3,6 +3,15 @@
 # Objective  
 Evaluate whether a new **landing page** design increases the conversion rate for bank-loan applications compared to the existing control page.  
 
+# Tech Stack  
+
+`Python`  
+`Pandas`  
+`Numpy`  
+`Matplotlib`  
+`Seaborn`  
+`Scipy`  
+
 <br/><br/>
 
 # 1. Load Dataset and Quick Overview
@@ -143,6 +152,8 @@ treatment  new_page        144316
 Name: count, dtype: int64
 ```
 
+<br/><br/>
+
 # 3. Exploratory Data Analysis (EDA)
 
 - Group, Random Assignment Balance & Conversion Overview
@@ -246,6 +257,8 @@ plt.show()
 
 ![Conversion Rate by Group](charts/1-Conversion_Rate_by_Group.png)
 
+<br/><br/>
+
 # 4. Statistical Testing (Two-Proportion Z-Test)
 
 - Two-proportion Z-test, p-value
@@ -317,25 +330,94 @@ plt.show()
 
 ![Conversion Counts by Group](charts/2-Conversion_counts_by_group.png)
 
+This chart visually supports p-value: both groups (`control` and `treatment`) had similar conversion patterns; no evidences of meaningful improvement achieved by `new_page`.
 
+<br/><br/>
 
+# 5. Confidence Interval Plot (Visualizing Uncertainty)
 
+Once we’ve seen that ``control`` and ``treatment`` look close, the next step is to quantify how confident we are in that difference.  
+We’ll calculate and visualize **95% confidence intervals** for each group’s conversion rate — showing the overlap (which visually explains **why p ≈ 0.16 isn't significant**).
 
+```python
+import scipy.stats as st
+import matplotlib.pyplot as plt
+import numpy as np
 
+# Compute conversion rates and confidence intervals
+summary = df.groupby('group')['converted'].agg(['mean', 'count'])
+summary['std_err'] = np.sqrt(summary['mean'] * (1 - summary['mean']) / summary['count'])
+summary['ci_low'], summary['ci_high'] = st.norm.interval(
+    0.95, loc=summary['mean'], scale=summary['std_err']
+)
 
+# Plot
+plt.figure(figsize=(6,4))
+plt.errorbar(summary.index, summary['mean'], 
+             yerr=summary['mean'] - summary['ci_low'], 
+             fmt='o', color="#fe779b", ecolor="#008080", 
+             elinewidth=1.5, capsize=20, markersize=8)
 
+plt.title('Conversion Rate with 95% Confidence Intervals')
+plt.ylabel('Conversion Rate')
+plt.ylim(0.10, 0.14)
+plt.xlim(-0.5, len(summary.index) - 0.5)
 
-### Experimental Overview  
-- **Control group:** current landing page  
-- **Treatment group:** redesigned landing page  
-- **Metric:** conversion rate (proportion of users who applied)  
-- **Hypothesis:**  
-  - **H₀:** pₜₑₐₜ = p꜀ₒₙₜᵣₒₗ  
-  - **H₁:** pₜₑₐₜ ≠ p꜀ₒₙₜᵣₒₗ  
+# Add labels for mean (dot), top and bottom caps
+for i, row in summary.iterrows():
+    # Dot label (mean)
+    plt.text(i, row['mean'] + 0.006, f"{row['mean']:.2%}", 
+             ha='center', va='bottom', fontsize=11, fontweight='bold', color="#fe779b")
+    # Top cap label
+    plt.text(i, row['ci_high'] + 0.001, f"{row['ci_high']:.2%}", 
+             ha='center', va='bottom', fontsize=8, color="#000000")
+    # Bottom cap label
+    plt.text(i, row['ci_low'] - 0.001, f"{row['ci_low']:.2%}", 
+             ha='center', va='top', fontsize=8, color="#000000")
 
----
+plt.show()
+```
 
-### Key Results  
+![Conversion Rate with 95% Confidence Intervals](charts/3-Conversion_rate_with_Confidence_intervals.png)
+
+<br/><br/>
+
+# 6. Lift Analysis (Business Impact)
+
+It shows how much better or worse the treatment performed relative to the control (%).
+
+```python
+# Calculate conversion rates
+conv_control = summary.loc['control', 'mean']
+conv_treatment = summary.loc['treatment', 'mean']
+
+# Calculate lift
+lift = (conv_treatment - conv_control) / conv_control * 100
+print(f"Lift: {lift:.2f}%")
+
+# Visualize it
+plt.figure(figsize=(4,4))
+plt.bar(['Lift'], [lift], color="#ffd700")
+plt.axhline(0, color='#dbdbdb', linestyle='--')
+plt.ylabel('Lift (%)')
+plt.title('Relative Improvement (Treatment vs Control)')
+plt.text(0, lift + 0.3, f"{lift:.2f}%", ha='center')
+plt.show()
+```
+
+![Relative Improvement (`treatment` over `control`)](charts/4-Relative-Improvement.png)
+
+## Interpretation
+
+Lift shows **−1.41%**, that means:
+
+    The new (treatment) landing page converted about 1.41% fewer users than the original (control).
+
+**However,** since your p-value = 0.16, that **difference isn’t statistically significant** — meaning it could easily be random variation.
+
+<br/><br/>
+
+# 7. Key Results  
 
 | Metric | Control | Treatment |
 |---------|----------|-----------|
@@ -344,37 +426,14 @@ plt.show()
 | Z-statistic | **−1.4036** |
 | p-value | **0.1604** |
 
-**Interpretation:**  
+## Interpretation:
+
 There is **no statistically significant difference** between the two landing pages (p > 0.05).  
 The treatment page performed slightly worse, but the difference is small and could be due to random variation.
 
----
+## Business Takeaways
 
-### Visual Insights  
-- Bar chart comparing conversion rates (grey–pink palette)  
-- Conversion counts by group  
-- 95 % confidence-interval plot confirming overlap  
-- Lift plot quantifying relative change  
-
-*(Screenshots or chart images can be embedded here.)*
-
----
-
-### Business Takeaways  
 - The new landing page **did not outperform** the control.  
-- Since the difference is not statistically significant, **keep the control page** for now.  
-- Consider:  
-  - Running a **power analysis** to check if the sample size was large enough.  
-  - Testing **smaller, targeted design changes** rather than a full redesign.  
-
----
-
-### Tech Stack  
-`Python 3` · `pandas` · `numpy` · `matplotlib` · `seaborn` · `scipy`  
-
----
-
-### Next Steps  
-- Perform **power analysis** to determine optimal sample size for future tests.  
-- Segment users by device type, region, or traffic source for deeper insights.  
-- Turn this notebook into a **reusable A/B testing template** for portfolio and job applications.  
+- Since the difference is not statistically significant, **keep the control page** for now.    
+  
+  
