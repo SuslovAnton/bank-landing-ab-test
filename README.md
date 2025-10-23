@@ -436,4 +436,7 @@ The treatment page performed slightly worse, but the difference is small and cou
 - The new landing page **did not outperform** the control.  
 - Since the difference is not statistically significant, **keep the control page** for now.    
   
-  
+## Business Impact
+- Saved potential development costs by identifying non-performing change.
+- Prevented ~1.4% potential conversion rate drop.
+- Data-driven decision making over subjective design preferences.
